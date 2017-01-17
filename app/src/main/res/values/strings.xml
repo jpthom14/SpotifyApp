@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SpotifyApp</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="login_button_text">Test</string>
+</resources>
