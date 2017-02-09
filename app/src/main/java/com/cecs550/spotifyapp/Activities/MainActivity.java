@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-
+            //test
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
