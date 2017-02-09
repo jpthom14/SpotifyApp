@@ -14,42 +14,12 @@
     tools:showIn="@layout/activity_main">
 
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="Name"
-        android:ems="10"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="48dp"
-        android:id="@+id/username_id" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:layout_below="@+id/username_id"
-        android:layout_alignRight="@+id/username_id"
-        android:layout_alignEnd="@+id/username_id"
-        android:layout_marginRight="17dp"
-        android:layout_marginEnd="17dp"
-        android:layout_marginTop="27dp"
-        android:id="@+id/password_id" />
-
     <Button
-        android:text="@string/login_button_text"
+        android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
         android:layout_marginStart="50dp"
         android:layout_marginTop="11dp"
-        android:id="@+id/login_button"
-        android:layout_below="@+id/password_id"
-        android:layout_alignLeft="@+id/username_id"
-        android:layout_alignStart="@+id/username_id" />
+        android:text="@string/login_button_text" />
 </RelativeLayout>

@@ -1,38 +1,33 @@
 package com.cecs550.spotifyapp.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.cecs550.spotifyapp.R;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
-    private String Username;
-    private String Password;
-
+    // Request code will be used to verify if result comes from the login activity. Can be set to any integer.
+    private static final int REQUEST_CODE = 1337;
+    private static final String REDIRECT_URI = "group-vibes-login://callback";
+    private static final String CLIENT_ID = "90325905157a44849e5db40c59499c7c";
+    private SpotifyApi api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        api = new SpotifyApi();
         Button loginButton = (Button) findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,114 +45,64 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void DoLoginStuff() {
-        EditText user = (EditText) findViewById(R.id.username_id);
-        EditText pass = (EditText) findViewById(R.id.password_id);
-        Username = user.getText().toString();
-        Password = pass.getText().toString();
-        String token = getSpotifyAccessToken();
-    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
 
+        // Check if result comes from the correct activity
+        if (requestCode == REQUEST_CODE) {
+            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
 
-    private String getAccessTokenFromJsonStr(String spotifyJsonStr) throws JSONException {
-        final String OWM_ACCESS_TOKEN = "access_token";
-        String accessToken = "";
+            switch (response.getType()) {
+                // Response was successful and contains auth token
+                case TOKEN:
+                    // Handle successful response
+                    api.setAccessToken(response.getAccessToken());
+                    DoStuffWithAPI();
+                    break;
 
-        try {
-            JSONObject spotifyJson = new JSONObject(spotifyJsonStr);
-            accessToken = spotifyJson.getString(OWM_ACCESS_TOKEN);
-        } catch (JSONException e) {
-            e.printStackTrace();
+                // Auth flow returned an error
+                case ERROR:
+                    // Handle error response
+                    String error = response.getError();
+                    Log.d("Auth Error", error);
+                    break;
+
+                // Most likely auth flow was cancelled
+                default:
+                    // Handle other cases
+            }
         }
-
-        return accessToken;
     }
 
-    private String getSpotifyAccessToken() {
-        String response = "";
-        String accessToken = "";
-        try {
-            String serviceURL = "https://accounts.spotify.com/api/token";
-            URL myURL = new URL(serviceURL);
+    private void DoLoginStuff() {
+        AuthenticationRequest.Builder builder =
+                new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
-            HttpsURLConnection myURLConnection = (HttpsURLConnection) myURL.openConnection();
+        builder.setScopes(new String[]{"playlist-read-private", "playlist-modify-private"});
+        AuthenticationRequest request = builder.build();
 
-            String userCredentials = Username + ":" + Password;
-            int flags = Base64.NO_WRAP | Base64.URL_SAFE;
-            byte[] encodedString = Base64.encode(userCredentials.getBytes(), flags);
-            String basicAuth = "Basic " + new String(encodedString);
-            myURLConnection.setRequestProperty("Authorization", basicAuth);
+        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
 
-            myURLConnection.setRequestMethod("POST");
-            myURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            myURLConnection.setUseCaches(false);
-            myURLConnection.setDoInput(true);
-            myURLConnection.setDoOutput(true);
-            System.setProperty("http.agent", "");
+    }
 
-            HashMap postDataParams = new HashMap<String, String>();
-            postDataParams.put("grant_type", "client_credentials");
-            OutputStream os = myURLConnection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getPostDataString(postDataParams));
 
-            writer.flush();
-            writer.close();
-            os.close();
 
-            response = "";
-            int responseCode = myURLConnection.getResponseCode();
-
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                String line;
-                BufferedReader br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
-                while ((line = br.readLine()) != null) {
-                    response += line;
-                }
-            } else {
-                response = "";
-                String errLine;
-                String errResponse = "";
-                BufferedReader br = new BufferedReader(new InputStreamReader(myURLConnection.getErrorStream()));
-                while ((errLine = br.readLine()) != null) {
-                    errResponse += errLine;
-                }
+    private void DoStuffWithAPI(){
+        SpotifyService spotify = api.getService();
+        spotify.getMyPlaylists(new Callback<Pager<PlaylistSimple>>() {
+            @Override
+            public void success(Pager<PlaylistSimple> playlistSimplePager, Response response) {
 
             }
 
+            @Override
+            public void failure(RetrofitError error) {
 
+            }
+        });
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String accessTokenJsonStr = response.toString();
-        try {
-            accessToken = getAccessTokenFromJsonStr(accessTokenJsonStr);
-            return accessToken;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return "";
     }
 
-    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()){
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-        }
-
-        return result.toString();
-    }
 
 }
