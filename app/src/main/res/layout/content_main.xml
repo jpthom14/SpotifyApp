@@ -13,13 +13,11 @@
     tools:context="com.cecs550.spotifyapp.Activities.MainActivity"
     tools:showIn="@layout/activity_main">
 
-
     <Button
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="11dp"
-        android:text="@string/login_button_text" />
+        android:text="@string/login_button_text"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
