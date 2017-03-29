@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cecs550.spotifyapp.Activities.MenuActivity">
+    tools:context="com.cecs550.spotifyapp.Activities.Activities.MenuActivity">
 
     <TextView
         android:id="@+id/textView2"

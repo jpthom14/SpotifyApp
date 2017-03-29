@@ -1,4 +1,4 @@
-package com.cecs550.spotifyapp.Activities;
+package com.cecs550.spotifyapp.Activities.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
 
 
-            //test
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         AuthenticationRequest.Builder builder =
                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
-        builder.setScopes(new String[]{"playlist-read-private", "playlist-modify-private", "user-library-read"});
+        builder.setScopes(new String[]{"playlist-read-private", "playlist-modify-private", "playlist-modify-public", "user-library-read", "playlist-read-collaborative"});
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
