@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">grapeVine</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">grapeVine</string>
     <string name="login_button_text">Login</string>
 </resources>

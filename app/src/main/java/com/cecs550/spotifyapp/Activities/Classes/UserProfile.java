@@ -1,9 +1,10 @@
 package com.cecs550.spotifyapp.Activities.Classes;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyCallback;
@@ -12,6 +13,7 @@ import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
+import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Recommendations;
 import kaaes.spotify.webapi.android.models.SavedTrack;
 import kaaes.spotify.webapi.android.models.Track;
@@ -30,13 +32,12 @@ public class UserProfile {
     private SpotifyService spotify;
     private final int Limit = 20;
 
-    public volatile boolean IsReady = false;
-
     public String User;
     public String AccessToken;
     public ArrayList<SavedTrack> SavedTrackArrayList;
     public ArrayList<PlaylistSimple> PlaylistArrayList;
     public ArrayList<Track> RecommendedTracks;
+    public String PlaylistID;
 
     public UserProfile(String token)
     {
@@ -50,8 +51,6 @@ public class UserProfile {
         SavedTrackArrayList = new ArrayList<>();
         PlaylistArrayList = new ArrayList<>();
         RecommendedTracks = new ArrayList<>();
-
-
     }
 
     public void SetupProfile(){
@@ -70,14 +69,15 @@ public class UserProfile {
 
     }
 
-    private void CreatePlaylist(){
+    private void CreatePlaylist(String playlistName){
         Map<String, Object> options = new HashMap<>();
-        options.put("name", "it actually worked!");
+        options.put("name", playlistName);
 
         spotify.createPlaylist(User, options, new Callback<Playlist>() {
             @Override
             public void success(Playlist playlist, Response response) {
-                String name = playlist.name;
+                PlaylistID = playlist.id;
+                AddTracksToPlaylist();
             }
 
             @Override
@@ -85,6 +85,34 @@ public class UserProfile {
                 String test = "";
             }
         });
+    }
+
+    private void AddTracksToPlaylist(){
+        Map<String, Object> query = new HashMap<>();
+        Map<String, Object> body = new HashMap<>();
+
+        ArrayList<String> tracksToAdd = new ArrayList<>();
+
+        for(int i =0; i < RecommendedTracks.size(); i++){
+            Track track = RecommendedTracks.get(i);
+            tracksToAdd.add(track.uri);
+        }
+
+        body.put("uris", tracksToAdd.toArray());
+
+        spotify.addTracksToPlaylist(User, PlaylistID, query, body, new Callback<Pager<PlaylistTrack>>() {
+            @Override
+            public void success(Pager<PlaylistTrack> playlistTrackPager, Response response) {
+                String test = "";
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                String test = "";
+            }
+        });
+
+
     }
 
     private void SetPlaylists(int offset){
@@ -143,9 +171,22 @@ public class UserProfile {
     private void SetRecommendations(){
         Map<String, Object> options = new HashMap<>();
 
-        //right now this is a random seed artist i found, should be
-        //changed to use seeds from the Spotify User's favorite artists, tracks, and albums
-        options.put("seed_artists", "4cJKxS7uOPhwb5UQ70sYpN,6UUrUCIZtQeOf8tC0WuzRy");
+        String trackList = "";
+
+        //for some reason this doesn't work with comma seperated stuff, but it works with single track
+        for(int i = 0; i < 1; i++){
+            SavedTrack track = SavedTrackArrayList.get(i);
+            String id = track.track.id;
+
+            if(i == 0) trackList += id;
+            else{
+                trackList+= ", " + id;
+            }
+        }
+
+        options.put("seed_tracks", trackList);
+
+        //you can put stuff like _target danceability in the options i think
 
         spotify.getRecommendations(options, new SpotifyCallback<Recommendations>() {
             @Override
@@ -159,7 +200,7 @@ public class UserProfile {
                 for (int i=0; i<recommendations.tracks.size(); i++){
                     RecommendedTracks.add(recommendations.tracks.get(i));
                 }
-                CreatePlaylist();
+                CreatePlaylist("it actually works");
             }
         });
     }
