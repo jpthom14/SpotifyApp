@@ -11,6 +11,7 @@ import com.cecs550.spotifyapp.R;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.spotify.sdk.android.authentication.*;
 
 
 public class MainActivity extends AppCompatActivity {
