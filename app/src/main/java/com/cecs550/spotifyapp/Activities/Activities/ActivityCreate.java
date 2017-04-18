@@ -23,12 +23,12 @@ public class ActivityCreate extends AppCompatActivity {
 
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.create);
+            setContentView(R.layout.activity_create);
 
             Intent intent = getIntent();
             accessToken = intent.getStringExtra("token");
 
-            Button finalCreateButton = (Button) findViewById(R.id.finalCreateButton);
+            Button finalCreateButton = (Button) findViewById(R.id.make_playlist);
             finalCreateButton.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -37,7 +37,7 @@ public class ActivityCreate extends AppCompatActivity {
                 }
             });
 
-            Button cancelCreateButton = (Button) findViewById(R.id.cancelCreateButton);
+            Button cancelCreateButton = (Button) findViewById(R.id.cancel_create_playlist);
             cancelCreateButton.setOnClickListener(new View.OnClickListener()
             {
                 @Override
