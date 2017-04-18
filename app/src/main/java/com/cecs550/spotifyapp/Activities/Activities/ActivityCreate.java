@@ -14,42 +14,50 @@ import android.widget.EditText;
 import com.cecs550.spotifyapp.Activities.Classes.UserProfile;
 import com.cecs550.spotifyapp.R;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class ActivityCreate extends AppCompatActivity {
 
     /**
      * Created by John on 4/18/2017.
      */
-        private String accessToken;
+    private String hostToken;
+    private ArrayList<String> Tokens;
 
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_create);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_create);
 
-            Intent intent = getIntent();
-            accessToken = intent.getStringExtra("token");
+        Tokens = new ArrayList<>();
 
-            //receive from other devices
+        Intent intent = getIntent();
+        hostToken = intent.getStringExtra("token");
 
-            Button finalCreateButton = (Button) findViewById(R.id.make_playlist);
-            finalCreateButton.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v) {
-                    showCreatePopup();
-                }
-            });
+        Button finalCreateButton = (Button) findViewById(R.id.make_playlist);
+        finalCreateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCreatePopup();
+            }
+        });
 
-            Button cancelCreateButton = (Button) findViewById(R.id.cancel_create_playlist);
-            cancelCreateButton.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v) {
-                    GoToMenu(accessToken);
-                }
-            });
-        }
+        Button cancelCreateButton = (Button) findViewById(R.id.cancel_create_playlist);
+        cancelCreateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoToMenu(hostToken);
+            }
+        });
 
-    private void showCreatePopup(){
+        GetOthersUsersTokens();
+    }
+
+    private void GetOthersUsersTokens() {
+
+    }
+
+    private void showCreatePopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Title for Playlist");
 
@@ -64,7 +72,7 @@ public class ActivityCreate extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String title = input.getText().toString();
-                UserProfile hostProfile = new UserProfile(accessToken);
+                UserProfile hostProfile = new UserProfile(hostToken);
 
                 hostProfile.SetupProfile(title);
             }
@@ -82,8 +90,7 @@ public class ActivityCreate extends AppCompatActivity {
         dialog.show();
     }
 
-    private void GoToMenu(String token)
-    {
+    private void GoToMenu(String token) {
         Intent intent = new Intent(this, MenuActivity.class);
         intent.putExtra("token", token);
         startActivity(intent);
