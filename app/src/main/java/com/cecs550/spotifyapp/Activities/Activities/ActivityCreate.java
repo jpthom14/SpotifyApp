@@ -14,7 +14,7 @@ import android.widget.EditText;
 import com.cecs550.spotifyapp.Activities.Classes.UserProfile;
 import com.cecs550.spotifyapp.R;
 
-public class ActivityCreate extends AppCompatActivity {
+public class ActivityCreate extends AppCompatActivity { //this works now
 
     /**
      * Created by John on 4/18/2017.
