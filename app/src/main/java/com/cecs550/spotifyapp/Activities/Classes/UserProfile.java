@@ -1,5 +1,7 @@
 package com.cecs550.spotifyapp.Activities.Classes;
 
+import android.os.AsyncTask;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class UserProfile {
     public ArrayList<PlaylistSimple> PlaylistArrayList;
     public ArrayList<Track> RecommendedTracks;
     public String PlaylistID;
+    public String PlaylistTitle;
 
     public UserProfile(String token)
     {
@@ -53,7 +56,8 @@ public class UserProfile {
         RecommendedTracks = new ArrayList<>();
     }
 
-    public void SetupProfile(){
+    public void SetupProfile(String title){
+        PlaylistTitle = title;
         spotify.getMe(new Callback<UserPrivate>() {
             @Override
             public void success(UserPrivate userPrivate, Response response) {
@@ -69,9 +73,9 @@ public class UserProfile {
 
     }
 
-    private void CreatePlaylist(String playlistName){
+    private void CreatePlaylist(){
         Map<String, Object> options = new HashMap<>();
-        options.put("name", playlistName);
+        options.put("name", PlaylistTitle);
 
         spotify.createPlaylist(User, options, new Callback<Playlist>() {
             @Override
@@ -200,8 +204,34 @@ public class UserProfile {
                 for (int i=0; i<recommendations.tracks.size(); i++){
                     RecommendedTracks.add(recommendations.tracks.get(i));
                 }
-                CreatePlaylist("it actually works");
+                CreatePlaylist();
             }
         });
+    }
+
+    private class LongOperation extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.interrupted();
+                }
+            }
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
     }
 }
