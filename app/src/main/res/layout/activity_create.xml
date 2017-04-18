@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context="com.cecs550.spotifyapp.Activities.Activities.MenuActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cecs550.spotifyapp.Activities.Activities.ActivityCreate">
+
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -20,19 +21,19 @@ tools:context="com.cecs550.spotifyapp.Activities.Activities.MenuActivity">
             android:layout_width="fill_parent"
             android:layout_alignParentBottom="true">
             <Button
-                android:id="@+id/createButton"
+                android:id="@+id/make_playlist"
                 android:layout_width="wrap_content"
                 android:layout_height="75dp"
-                android:layout_weight="1" android:text="@string/create_button_text">
+                android:layout_weight="1" android:text="@string/make_playlist_text">
             </Button>
             <Button
-                android:id="@+id/joinButton"
+                android:id="@+id/cancel_create_playlist"
                 android:layout_width="wrap_content"
                 android:layout_height="75dp"
                 android:layout_weight="1"
-                android:text="@string/join_button_text">
+                android:text="@string/create_cancel_text">
             </Button>
         </LinearLayout>
     </RelativeLayout>
 
-    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

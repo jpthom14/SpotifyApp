@@ -17,6 +17,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -28,7 +29,6 @@
                 <data
                     android:host="callback"
                     android:scheme="MainActivity" />
-
             </intent-filter>
         </activity>
         <activity
@@ -36,7 +36,9 @@
             android:launchMode="standard"
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name=".Activities.Activities.MenuActivity"></activity>
+        <activity android:name=".Activities.Activities.MenuActivity" />
+        <activity android:name=".Activities.Activities.ActivityCreate" />
+        <activity android:name=".Activities.Activities.JoinActivity"></activity>
     </application>
 
 </manifest>
