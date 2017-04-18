@@ -19,6 +19,8 @@ public class JoinActivity extends AppCompatActivity {
         Intent intent = getIntent();
         accessToken = intent.getStringExtra("token");
 
+        //connect to host
+
         Button cancelButton = (Button) findViewById(R.id.cancel_create_playlist);
         cancelButton.setOnClickListener(new View.OnClickListener()
         {

@@ -29,6 +29,14 @@
                 android:text="@string/create_cancel_text">
             </Button>
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/grape_vine_logo"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -10,30 +10,42 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="horizontal"
         android:gravity="bottom"
+        android:orientation="horizontal"
         android:paddingLeft="0dp"
-        android:paddingRight="0dp" >
+        android:paddingRight="0dp">
 
         <LinearLayout
             android:id="@+id/LinearLayout02"
-            android:layout_height="wrap_content"
             android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
+
             <Button
                 android:id="@+id/make_playlist"
                 android:layout_width="wrap_content"
                 android:layout_height="75dp"
-                android:layout_weight="1" android:text="@string/make_playlist_text">
-            </Button>
+                android:layout_weight="0.66"
+                android:text="@string/make_playlist_text"></Button>
+
             <Button
                 android:id="@+id/cancel_create_playlist"
                 android:layout_width="wrap_content"
                 android:layout_height="75dp"
                 android:layout_weight="1"
-                android:text="@string/create_cancel_text">
-            </Button>
+                android:text="@string/create_cancel_text"></Button>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Waiting for friends..."
+            android:textStyle="bold"
+            tools:textSize="30sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="133dp" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

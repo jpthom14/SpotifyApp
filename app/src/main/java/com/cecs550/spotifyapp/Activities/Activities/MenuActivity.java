@@ -14,6 +14,10 @@ import android.widget.EditText;
 
 import com.cecs550.spotifyapp.Activities.Classes.UserProfile;
 import com.cecs550.spotifyapp.R;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.cecs550.spotifyapp.R;
 
 
 public class MenuActivity extends AppCompatActivity {
@@ -43,6 +47,16 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+        Button logoutButton = (Button) findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                DoLogoutStuff(accessToken);
+            }
+        });
+
 }
 
     private void GoToCreatePlaylist(String token)
@@ -59,5 +73,9 @@ public class MenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void DoLogoutStuff(String token)
+    {
+
+    }
 
 }

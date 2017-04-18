@@ -9,30 +9,48 @@ tools:context="com.cecs550.spotifyapp.Activities.Activities.MenuActivity">
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="horizontal"
         android:gravity="bottom"
+        android:orientation="horizontal"
         android:paddingLeft="0dp"
-        android:paddingRight="0dp" >
+        android:paddingRight="0dp">
 
         <LinearLayout
             android:id="@+id/LinearLayout02"
-            android:layout_height="wrap_content"
             android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
+
             <Button
                 android:id="@+id/createButton"
                 android:layout_width="wrap_content"
                 android:layout_height="75dp"
-                android:layout_weight="1" android:text="@string/create_button_text">
-            </Button>
+                android:layout_weight="1"
+                android:text="@string/create_button_text"></Button>
+
             <Button
                 android:id="@+id/joinButton"
                 android:layout_width="wrap_content"
                 android:layout_height="75dp"
                 android:layout_weight="1"
-                android:text="@string/join_button_text">
-            </Button>
+                android:text="@string/join_button_text"></Button>
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/grape_vine_logo"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="67dp"
+            android:text="Logout" />
     </RelativeLayout>
 
-    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

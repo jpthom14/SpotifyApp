@@ -28,6 +28,8 @@ public class ActivityCreate extends AppCompatActivity {
             Intent intent = getIntent();
             accessToken = intent.getStringExtra("token");
 
+            //receive from other devices
+
             Button finalCreateButton = (Button) findViewById(R.id.make_playlist);
             finalCreateButton.setOnClickListener(new View.OnClickListener()
             {
