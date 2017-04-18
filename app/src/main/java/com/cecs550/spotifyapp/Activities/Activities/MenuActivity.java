@@ -31,7 +31,7 @@ public class MenuActivity extends AppCompatActivity {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCreatePopup();
+                GoToCreatePlaylist(accessToken);
             }
         });
 
@@ -42,39 +42,13 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
-    }
+}
 
-    private void showCreatePopup(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Enter Title for Playlist");
-
-        // Set up the input
-        final EditText input = new EditText(this);
-        // Specify the type of input expected; thi
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        builder.setView(input);
-
-        // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String title = input.getText().toString();
-                UserProfile hostProfile = new UserProfile(accessToken);
-
-                hostProfile.SetupProfile(title);
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog dialog = builder.create();
-
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
-        dialog.show();
+    private void GoToCreatePlaylist(String token)
+    {
+        Intent intent = new Intent(this, ActivityCreate.class);
+        intent.putExtra("token", token);
+        startActivity(intent);
     }
 
 

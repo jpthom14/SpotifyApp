@@ -8,7 +8,8 @@
     tools:context="com.cecs550.spotifyapp.Activities.Activities.MainActivity">
 
 
-    <include layout="@layout/content_main"
-        android:id="@+id/include" />
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_main" />
 
 </android.support.design.widget.CoordinatorLayout>
