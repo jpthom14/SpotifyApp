@@ -42,7 +42,7 @@ public class ActivityCreate extends AppCompatActivity {
             {
                 @Override
                 public void onClick(View v) {
-                //should go back to menu
+                    GoToMenu(accessToken);
                 }
             });
         }
@@ -78,5 +78,12 @@ public class ActivityCreate extends AppCompatActivity {
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
         dialog.show();
+    }
+
+    private void GoToMenu(String token)
+    {
+        Intent intent = new Intent(this, MenuActivity.class);
+        intent.putExtra("token", token);
+        startActivity(intent);
     }
 }

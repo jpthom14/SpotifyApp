@@ -65,6 +65,7 @@ public class UserProfile {
 
             @Override
             public void failure(RetrofitError error) {
+                String ecror = error.getMessage();
 
             }
         });
