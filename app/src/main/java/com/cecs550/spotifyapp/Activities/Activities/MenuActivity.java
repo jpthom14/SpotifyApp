@@ -75,7 +75,7 @@ public class MenuActivity extends AppCompatActivity {
 
     private void DoLogoutStuff(String token)
     {
-
+        //logout
     }
 
 }
