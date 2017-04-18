@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.cecs550.spotifyapp.Activities.Classes.UserProfile;
 import com.cecs550.spotifyapp.R;
+
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -55,6 +58,11 @@ public class ActivityCreate extends AppCompatActivity {
 
     private void GetOthersUsersTokens() {
 
+    }
+
+    private void SetNumberConnectedText(int i){
+        TextView numUsersText = (TextView) findViewById(R.id.users_joined_text);
+        numUsersText.setText(Integer.toString(i));
     }
 
     private void showCreatePopup() {

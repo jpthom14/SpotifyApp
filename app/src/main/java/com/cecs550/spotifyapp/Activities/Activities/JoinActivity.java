@@ -21,7 +21,7 @@ public class JoinActivity extends AppCompatActivity {
 
         //connect to host
 
-        Button cancelButton = (Button) findViewById(R.id.cancel_create_playlist);
+        Button cancelButton = (Button) findViewById(R.id.cancel_join_playlist);
         cancelButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
