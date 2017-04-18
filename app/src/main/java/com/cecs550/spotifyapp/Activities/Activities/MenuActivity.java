@@ -39,6 +39,7 @@ public class MenuActivity extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GoToJoinPlaylist(accessToken);
             }
         });
 
@@ -47,6 +48,13 @@ public class MenuActivity extends AppCompatActivity {
     private void GoToCreatePlaylist(String token)
     {
         Intent intent = new Intent(this, ActivityCreate.class);
+        intent.putExtra("token", token);
+        startActivity(intent);
+    }
+
+    private void GoToJoinPlaylist(String token)
+    {
+        Intent intent = new Intent(this, JoinActivity.class);
         intent.putExtra("token", token);
         startActivity(intent);
     }

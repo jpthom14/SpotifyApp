@@ -42,7 +42,7 @@ public class ActivityCreate extends AppCompatActivity {
             {
                 @Override
                 public void onClick(View v) {
-
+                //should go back to menu
                 }
             });
         }

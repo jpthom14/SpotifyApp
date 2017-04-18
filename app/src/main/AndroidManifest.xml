@@ -34,7 +34,8 @@
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".Activities.Activities.MenuActivity" />
-        <activity android:name=".Activities.Activities.ActivityCreate"></activity>
+        <activity android:name=".Activities.Activities.ActivityCreate" />
+        <activity android:name=".Activities.Activities.JoinActivity"></activity>
     </application>
 
 </manifest>
