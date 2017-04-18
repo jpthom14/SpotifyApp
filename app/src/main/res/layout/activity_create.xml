@@ -11,6 +11,38 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp" >
+
+        <LinearLayout
+            android:id="@+id/LinearLayout03"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:id="@+id/pre_joined_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Number of users joined: "
+                android:textSize="22dp"
+                android:visibility="visible" />
+            <TextView
+                android:id="@+id/users_joined_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22dp"
+                android:text="0"
+                android:visibility="visible" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
         android:gravity="bottom"
         android:paddingLeft="0dp"
         android:paddingRight="0dp" >
