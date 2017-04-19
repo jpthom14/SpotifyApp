@@ -19,7 +19,7 @@ public class NsdHelper {
     NsdManager.DiscoveryListener discoveryListener;
     NsdManager.RegistrationListener registrationListener;
 
-    public static final String SERVICE_TYPE = "_http._tcp.";
+    public static final String SERVICE_TYPE = "ipp._tcp.";
     public static final String TAG = "NsdHelper";
     public String serviceName = "grapeVinePlaylist";
 
@@ -38,9 +38,6 @@ public class NsdHelper {
             }
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                if (serviceInfo.getServiceName().equals(serviceName)) {
-                    return;
-                }
                 nsdServiceInfo = serviceInfo;
             }
         };
@@ -60,9 +57,7 @@ public class NsdHelper {
                 System.out.println("Service Found?");
                 if (!service.getServiceType().equals(SERVICE_TYPE)) {
                     Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
-                } /*else if (service.getServiceName().equals(serviceName)) {
-                    Log.d(TAG, "Same machine: " + serviceName);
-                }*/ else if (service.getServiceName().contains(serviceName)) {
+                } else if (service.getServiceName().contains(serviceName)) {
                     manager.resolveService(service, resolveListener);
                     Log.d(TAG, "service resolved?");
                 }
