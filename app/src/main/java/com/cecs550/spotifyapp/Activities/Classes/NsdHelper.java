@@ -19,8 +19,8 @@ public class NsdHelper {
     NsdManager.RegistrationListener registrationListener;
 
     public static final String SERVICE_TYPE = "_http._tcp.";
-    public static final String TAG = "";
-    public String serviceName = "";
+    public static final String TAG = "NsdHelper";
+    public String serviceName = "grapeVinePlaylist";
 
     public NsdServiceInfo nsdServiceInfo;
 
@@ -46,6 +46,7 @@ public class NsdHelper {
     }
 
     public void initializeDiscoveryListener() {
+        System.out.println("Initializing discovery listener...");
         discoveryListener = new NsdManager.DiscoveryListener() {
             @Override
             public void onDiscoveryStarted(String regType) {
@@ -55,6 +56,7 @@ public class NsdHelper {
             @Override
             public void onServiceFound(NsdServiceInfo service) {
                 Log.d(TAG, "Service discovery success" + service);
+                System.out.println("Service Found?");
                 if (!service.getServiceType().equals(SERVICE_TYPE)) {
                     Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
                 } else if (service.getServiceName().equals(serviceName)) {
@@ -123,10 +125,12 @@ public class NsdHelper {
     }
 
     public void discoverServices() {
+        System.out.println("discoverServices()");
         stopDiscovery();  // Cancel any existing discovery request
         initializeDiscoveryListener();
         manager.discoverServices(
                 SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
+        System.out.println("Hi");
     }
     public void stopDiscovery() {
         if (discoveryListener != null) {

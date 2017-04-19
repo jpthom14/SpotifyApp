@@ -114,6 +114,7 @@ public class PlaylistConnection {
                     setLocalPort(serverSocket.getLocalPort());
 
                     while(!Thread.currentThread().isInterrupted()) {
+                        System.out.println("help");
                         setSocket(serverSocket.accept());
                         if(playlistClient == null) {
                             int port = socket.getPort();

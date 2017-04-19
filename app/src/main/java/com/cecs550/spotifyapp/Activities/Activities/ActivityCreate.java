@@ -2,16 +2,21 @@ package com.cecs550.spotifyapp.Activities.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.cecs550.spotifyapp.Activities.Classes.NsdHelper;
+import com.cecs550.spotifyapp.Activities.Classes.PlaylistConnection;
 import com.cecs550.spotifyapp.Activities.Classes.UserProfile;
 import com.cecs550.spotifyapp.R;
 
@@ -28,6 +33,15 @@ public class ActivityCreate extends AppCompatActivity {
     private String hostToken;
     private ArrayList<String> Tokens;
 
+    NsdHelper nsdHelper;
+
+    private Handler handler;
+
+    public static final String TAG = "NsdChat";
+
+    PlaylistConnection connection;
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
@@ -36,6 +50,13 @@ public class ActivityCreate extends AppCompatActivity {
 
         Intent intent = getIntent();
         hostToken = intent.getStringExtra("token");
+
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                String chatLine = msg.getData().getString("msg");
+            }
+        };
 
         Button finalCreateButton = (Button) findViewById(R.id.make_playlist);
         finalCreateButton.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +75,40 @@ public class ActivityCreate extends AppCompatActivity {
         });
 
         GetOthersUsersTokens();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "Starting.");
+        connection = new PlaylistConnection(handler);
+        nsdHelper = new NsdHelper(this);
+        nsdHelper.initializeNsd();
+
+        if(connection.getLocalPort() > -1) {
+            nsdHelper.registerService(connection.getLocalPort());
+        } else {
+            Log.d(TAG, "ServerSocket isn't bound.");
+        }
+
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "Pausing.");
+        if (nsdHelper != null) {
+            nsdHelper.stopDiscovery();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "Resuming.");
+        super.onResume();
+        if (nsdHelper != null) {
+            nsdHelper.discoverServices();
+        }
     }
 
     private void GetOthersUsersTokens() {

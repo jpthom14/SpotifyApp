@@ -61,6 +61,7 @@ public class UserProfile {
             public void success(UserPrivate userPrivate, Response response) {
                 User = userPrivate.id;
                 SetPlaylists(0);
+                SetRecommendations();
             }
 
             @Override
