@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
 import android.net.nsd.NsdManager;
 import android.util.Log;
+
+import com.cecs550.spotifyapp.Activities.Activities.MenuActivity;
+
 public class NsdHelper {
     Context mContext;
     NsdManager mNsdManager;
@@ -14,6 +17,7 @@ public class NsdHelper {
     public static final String TAG = "NsdHelper";
     public String mServiceName = "NsdChat";
     NsdServiceInfo mService;
+
     public NsdHelper(Context context) {
         mContext = context;
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);

@@ -26,6 +26,8 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.cecs550.spotifyapp.R;
 
+import org.w3c.dom.Text;
+
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -36,6 +38,7 @@ public class MenuActivity extends AppCompatActivity {
 
     private String hostToken;
     private String guestToken;
+    public static TextView statusText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +80,12 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
-        final TextView tokenText = (TextView) findViewById(R.id.token_text);
+        statusText = (TextView) findViewById(R.id.token_text);
         mUpdateHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 String token = msg.getData().getString("msg");
-                tokenText.setText("Token Received");
+                statusText.setText("Token Received");
                 guestToken = token;
                 showCreatePopup();
             }
@@ -105,9 +108,9 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String title = input.getText().toString();
-                UserProfile hostProfile = new UserProfile(guestToken);
+                UserProfile hostProfile = new UserProfile(hostToken, guestToken);
 
-                hostProfile.SetupProfile(title);
+                hostProfile.SetupProfiles(title);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -125,6 +128,7 @@ public class MenuActivity extends AppCompatActivity {
 
     private void Host() {
         // Register service
+        statusText.setText("Waiting for users to join...");
         if(mConnection.getLocalPort() > -1) {
             mNsdHelper.registerService(mConnection.getLocalPort());
         } else {
@@ -136,6 +140,7 @@ public class MenuActivity extends AppCompatActivity {
         NsdServiceInfo service = mNsdHelper.getChosenServiceInfo();
         if (service != null) {
             Log.d(TAG, "Connecting.");
+            statusText.setText("Connecting...");
             mConnection.connectToServer(service.getHost(),
                     service.getPort());
         } else {
@@ -145,9 +150,11 @@ public class MenuActivity extends AppCompatActivity {
 
     public void Send() {
         mConnection.sendMessage(hostToken);
+        statusText.setText("Sent.");
     }
 
     private void Join() {
+        statusText.setText("Joining...");
         mNsdHelper.discoverServices();
     }
 

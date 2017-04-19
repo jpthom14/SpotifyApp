@@ -45,8 +45,15 @@ tools:context="com.cecs550.spotifyapp.Activities.Activities.MenuActivity">
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:text="Send"></Button>
-        </LinearLayout>
 
+        </LinearLayout>
+        <TextView
+            android:id="@+id/token_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22dp"
+            android:text=""
+            android:visibility="visible" />
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
@@ -54,13 +61,7 @@ tools:context="com.cecs550.spotifyapp.Activities.Activities.MenuActivity">
             app:srcCompat="@drawable/grape_vine_logo"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
-        <TextView
-            android:id="@+id/token_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22dp"
-            android:text="Token goes here when it gets it..."
-            android:visibility="visible" />
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

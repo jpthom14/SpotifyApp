@@ -92,9 +92,7 @@ public class ActivityCreate extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String title = input.getText().toString();
-                UserProfile hostProfile = new UserProfile(hostToken);
 
-                hostProfile.SetupProfile(title);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

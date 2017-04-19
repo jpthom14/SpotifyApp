@@ -1,6 +1,9 @@
 package com.cecs550.spotifyapp.Activities.Classes;
 
 import android.os.AsyncTask;
+import android.view.Menu;
+
+import com.cecs550.spotifyapp.Activities.Activities.MenuActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +18,7 @@ import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Recommendations;
+import kaaes.spotify.webapi.android.models.Result;
 import kaaes.spotify.webapi.android.models.SavedTrack;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.UserPrivate;
@@ -29,37 +33,48 @@ import retrofit.client.Response;
 public class UserProfile {
 
     private SpotifyApi api;
+    private SpotifyApi hostApi;
     private SpotifyService spotify;
+    private SpotifyService hostSpotify;
     private final int Limit = 20;
 
-    public String User;
-    public String AccessToken;
+    public String GuestID;
+    public String HostID;
+    public String HostToken;
+    public String GuestToken;
     public ArrayList<SavedTrack> SavedTrackArrayList;
     public ArrayList<PlaylistSimple> PlaylistArrayList;
     public ArrayList<Track> RecommendedTracks;
+    public ArrayList<SavedTrack> HostSavedTracks;
     public String PlaylistID;
     public String PlaylistTitle;
 
-    public UserProfile(String token)
+    public UserProfile(String host, String guest)
     {
         //Set up for api use
-        AccessToken = token;
+        HostToken = host;
+        GuestToken = guest;
         api = new SpotifyApi();
-        api.setAccessToken(AccessToken);
+        api.setAccessToken(guest);
         spotify = api.getService();
+
+        hostApi = new SpotifyApi();
+        hostApi.setAccessToken(host);
+        hostSpotify = hostApi.getService();
 
         //Inititalize properties
         SavedTrackArrayList = new ArrayList<>();
         PlaylistArrayList = new ArrayList<>();
         RecommendedTracks = new ArrayList<>();
+        HostSavedTracks = new ArrayList<>();
     }
 
-    public void SetupProfile(String title){
+    public void SetupProfiles(String title){
         PlaylistTitle = title;
         spotify.getMe(new Callback<UserPrivate>() {
             @Override
             public void success(UserPrivate userPrivate, Response response) {
-                User = userPrivate.id;
+                GuestID = userPrivate.id;
                 SetPlaylists(0);
             }
 
@@ -69,18 +84,32 @@ public class UserProfile {
 
             }
         });
+    }
 
+    private void GuestFollowPlaylist(){
+
+        spotify.followPlaylist(HostID, PlaylistID, new Callback<Result>() {
+            @Override
+            public void success(Result result, Response response) {
+                AddTracksToPlaylist();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
     }
 
     private void CreatePlaylist(){
         Map<String, Object> options = new HashMap<>();
         options.put("name", PlaylistTitle);
 
-        spotify.createPlaylist(User, options, new Callback<Playlist>() {
+        hostSpotify.createPlaylist(HostID, options, new Callback<Playlist>() {
             @Override
             public void success(Playlist playlist, Response response) {
                 PlaylistID = playlist.id;
-                AddTracksToPlaylist();
+                GuestFollowPlaylist();
             }
 
             @Override
@@ -103,10 +132,10 @@ public class UserProfile {
 
         body.put("uris", tracksToAdd.toArray());
 
-        spotify.addTracksToPlaylist(User, PlaylistID, query, body, new Callback<Pager<PlaylistTrack>>() {
+        hostSpotify.addTracksToPlaylist(HostID, PlaylistID, query, body, new Callback<Pager<PlaylistTrack>>() {
             @Override
             public void success(Pager<PlaylistTrack> playlistTrackPager, Response response) {
-                String test = "";
+                MenuActivity.statusText.setText("Playlist Created");
             }
 
             @Override
@@ -171,6 +200,86 @@ public class UserProfile {
         });
     }
 
+    private void SetHost(){
+        hostSpotify.getMe(new Callback<UserPrivate>() {
+            @Override
+            public void success(UserPrivate userPrivate, Response response) {
+                HostID = userPrivate.id;
+                SetHostSavedTracks(0);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                String ecror = error.getMessage();
+
+            }
+        });
+    }
+
+    private void SetHostSavedTracks(int offset){
+        Map<String, Object> options = new HashMap<>();
+        options.put(SpotifyService.LIMIT, Limit);
+        options.put(SpotifyService.OFFSET, offset);
+
+        hostSpotify.getMySavedTracks(options, new SpotifyCallback<Pager<SavedTrack>>() {
+            @Override
+            public void success(Pager<SavedTrack> savedTrackPager, Response response) {
+                // handle successful response
+                for (int i=0; i<savedTrackPager.items.size(); i++) {
+                    HostSavedTracks.add(savedTrackPager.items.get(i));
+                }
+                if(savedTrackPager.next != null){
+                    SetHostSavedTracks(savedTrackPager.offset + Limit);
+                    return;
+                }
+                SetHostRecommendations();
+            }
+
+            @Override
+            public void failure(SpotifyError error) {
+                // handle error
+                String text = error.getMessage();
+            }
+        });
+    }
+
+    private void SetHostRecommendations(){
+        Map<String, Object> options = new HashMap<>();
+
+        String trackList = "";
+
+        //for some reason this doesn't work with comma seperated stuff, but it works with single track
+        for(int i = 0; i < 1; i++){
+            SavedTrack track = HostSavedTracks.get(i);
+            String id = track.track.id;
+
+            if(i == 0) trackList += id;
+            else{
+                trackList+= ", " + id;
+            }
+        }
+
+        options.put("seed_tracks", trackList);
+
+        //you can put stuff like _target danceability in the options i think
+
+        spotify.getRecommendations(options, new SpotifyCallback<Recommendations>() {
+            @Override
+            public void failure(SpotifyError spotifyError) {
+                String error = spotifyError.getMessage();
+            }
+
+            @Override
+            public void success(Recommendations recommendations, Response response) {
+                // handle successful response
+                for (int i=0; i<recommendations.tracks.size(); i++){
+                    RecommendedTracks.add(recommendations.tracks.get(i));
+                }
+                CreatePlaylist();
+            }
+        });
+    }
+
     private void SetRecommendations(){
         Map<String, Object> options = new HashMap<>();
 
@@ -203,7 +312,7 @@ public class UserProfile {
                 for (int i=0; i<recommendations.tracks.size(); i++){
                     RecommendedTracks.add(recommendations.tracks.get(i));
                 }
-                CreatePlaylist();
+                SetHost();
             }
         });
     }
