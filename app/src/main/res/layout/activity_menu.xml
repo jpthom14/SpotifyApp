@@ -33,6 +33,18 @@ tools:context="com.cecs550.spotifyapp.Activities.Activities.MenuActivity">
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:text="@string/join_button_text"></Button>
+            <Button
+                android:id="@+id/connect_button"
+                android:layout_width="wrap_content"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:text="Connect"></Button>
+            <Button
+                android:id="@+id/send_button"
+                android:layout_width="wrap_content"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:text="Send"></Button>
         </LinearLayout>
 
         <ImageView
@@ -42,15 +54,13 @@ tools:context="com.cecs550.spotifyapp.Activities.Activities.MenuActivity">
             app:srcCompat="@drawable/grape_vine_logo"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
-
-        <Button
-            android:id="@+id/logoutButton"
+        <TextView
+            android:id="@+id/token_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="67dp"
-            android:text="Logout" />
+            android:textSize="22dp"
+            android:text="Token goes here when it gets it..."
+            android:visibility="visible" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

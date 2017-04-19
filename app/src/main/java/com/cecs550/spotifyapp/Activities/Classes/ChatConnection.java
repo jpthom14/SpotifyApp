@@ -1,15 +1,12 @@
 package com.cecs550.spotifyapp.Activities.Classes;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -19,144 +16,132 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-/**
- * Created by braxt on 3/29/2017.
- */
-
-public class PlaylistConnection {
-
-    private Socket socket;
-    private int localPort = -1;
-
-    private static final String TAG = "PlaylistConnection";
-    private PlaylistClient playlistClient;
-    private PlaylistServer playlistServer;
-    private Handler updateHandler;
-
-    public PlaylistConnection(Handler handler) {
-        updateHandler = handler;
-        playlistServer = new PlaylistServer();
+public class ChatConnection {
+    private Handler mUpdateHandler;
+    private ChatServer mChatServer;
+    private ChatClient mChatClient;
+    private static final String TAG = "ChatConnection";
+    private Socket mSocket;
+    private int mPort = -1;
+    public ChatConnection(Handler handler) {
+        mUpdateHandler = handler;
+        mChatServer = new ChatServer(handler);
     }
-
     public void tearDown() {
-        playlistServer.tearDown();
-        if(playlistClient != null) {
-            playlistClient.tearDown();
+        mChatServer.tearDown();
+        if (mChatClient != null) {
+            mChatClient.tearDown();
         }
     }
-
     public void connectToServer(InetAddress address, int port) {
-        playlistClient = new PlaylistClient(address, port);
+        mChatClient = new ChatClient(address, port);
     }
-
-    public void sendProfile (UserProfile profile) {
-        if (playlistClient != null) {
-            playlistClient.sendProfile(profile);
+    public void sendMessage(String msg) {
+        if (mChatClient != null) {
+            mChatClient.sendMessage(msg);
         }
     }
-
     public int getLocalPort() {
-        return localPort;
+        return mPort;
     }
-
     public void setLocalPort(int port) {
-        localPort = port;
+        mPort = port;
     }
-
-    public synchronized void updateProfiles(UserProfile prof, boolean local) {
+    public synchronized void updateMessages(String msg, boolean local) {
+        Log.e(TAG, "Updating message: " + msg);
+        if (local) {
+            return;
+        }
+        Bundle messageBundle = new Bundle();
+        messageBundle.putString("msg", msg);
         Message message = new Message();
-        message.obj = prof;
-        updateHandler.sendMessage(message);
+        message.setData(messageBundle);
+        mUpdateHandler.sendMessage(message);
     }
-
     private synchronized void setSocket(Socket socket) {
-        if (socket != null) {
-            if (socket.isConnected()) {
+        Log.d(TAG, "setSocket being called.");
+        if (socket == null) {
+            Log.d(TAG, "Setting a null socket.");
+        }
+        if (mSocket != null) {
+            if (mSocket.isConnected()) {
                 try {
-                    socket.close();
+                    mSocket.close();
                 } catch (IOException e) {
+                    // TODO(alexlucas): Auto-generated catch block
                     e.printStackTrace();
                 }
             }
         }
-        this.socket = socket;
+        mSocket = socket;
     }
-
     private Socket getSocket() {
-        return socket;
+        return mSocket;
     }
-
-    private class PlaylistServer {
-        ServerSocket serverSocket = null;
-        Thread thread = null;
-
-        public PlaylistServer() {
-            thread = new Thread(new ServerThread());
-            thread.start();
+    private class ChatServer {
+        ServerSocket mServerSocket = null;
+        Thread mThread = null;
+        public ChatServer(Handler handler) {
+            mThread = new Thread(new ServerThread());
+            mThread.start();
         }
-
         public void tearDown() {
-            thread.interrupt();
+            mThread.interrupt();
             try {
-                serverSocket.close();
-            } catch(IOException e) {
-                e.printStackTrace();
+                mServerSocket.close();
+            } catch (IOException ioe) {
+                Log.e(TAG, "Error when closing server socket.");
             }
         }
-
         class ServerThread implements Runnable {
-
             @Override
             public void run() {
-
                 try {
-                    serverSocket = new ServerSocket(0);
-                    setLocalPort(serverSocket.getLocalPort());
-
-                    while(!Thread.currentThread().isInterrupted()) {
-                        System.out.println("help");
-                        setSocket(serverSocket.accept());
-                        if(playlistClient == null) {
-                            int port = socket.getPort();
-                            InetAddress address = socket.getInetAddress();
+                    // Since discovery will happen via Nsd, we don't need to care which port is
+                    // used.  Just grab an available one  and advertise it via Nsd.
+                    mServerSocket = new ServerSocket(0);
+                    setLocalPort(mServerSocket.getLocalPort());
+                    while (!Thread.currentThread().isInterrupted()) {
+                        Log.d(TAG, "ServerSocket Created, awaiting connection");
+                        setSocket(mServerSocket.accept());
+                        Log.d(TAG, "Connected.");
+                        if (mChatClient == null) {
+                            int port = mSocket.getPort();
+                            InetAddress address = mSocket.getInetAddress();
                             connectToServer(address, port);
                         }
                     }
-
                 } catch (IOException e) {
+                    Log.e(TAG, "Error creating ServerSocket: ", e);
                     e.printStackTrace();
                 }
             }
         }
     }
-
-    private class PlaylistClient {
-        private InetAddress address;
-        private int port;
-
-        private final String CLIENT_TAG = "PlaylistClient";
+    private class ChatClient {
+        private InetAddress mAddress;
+        private int PORT;
+        private final String CLIENT_TAG = "ChatClient";
         private Thread mSendThread;
         private Thread mRecThread;
-
-        public PlaylistClient(InetAddress address, int port) {
-            Log.d(CLIENT_TAG, "Creating playlistClient");
-            this.address = address;
-            this.port = port;
+        public ChatClient(InetAddress address, int port) {
+            Log.d(CLIENT_TAG, "Creating chatClient");
+            this.mAddress = address;
+            this.PORT = port;
             mSendThread = new Thread(new SendingThread());
             mSendThread.start();
         }
-
         class SendingThread implements Runnable {
-            BlockingQueue<UserProfile> messageQueue;
+            BlockingQueue<String> mMessageQueue;
             private int QUEUE_CAPACITY = 10;
             public SendingThread() {
-                messageQueue = new ArrayBlockingQueue<UserProfile>(QUEUE_CAPACITY);
+                mMessageQueue = new ArrayBlockingQueue<String>(QUEUE_CAPACITY);
             }
             @Override
             public void run() {
                 try {
                     if (getSocket() == null) {
-                        setSocket(new Socket(address, port));
+                        setSocket(new Socket(mAddress, PORT));
                         Log.d(CLIENT_TAG, "Client-side socket initialized.");
                     } else {
                         Log.d(CLIENT_TAG, "Socket already initialized. skipping!");
@@ -170,8 +155,8 @@ public class PlaylistConnection {
                 }
                 while (true) {
                     try {
-                        UserProfile prof = messageQueue.take();
-                        sendProfile(prof);
+                        String msg = mMessageQueue.take();
+                        sendMessage(msg);
                     } catch (InterruptedException ie) {
                         Log.d(CLIENT_TAG, "Message sending loop interrupted, exiting");
                     }
@@ -181,22 +166,23 @@ public class PlaylistConnection {
         class ReceivingThread implements Runnable {
             @Override
             public void run() {
-                ObjectInputStream input = null;
+                BufferedReader input;
                 try {
-                    input = new ObjectInputStream(socket.getInputStream());
+                    input = new BufferedReader(new InputStreamReader(
+                            mSocket.getInputStream()));
                     while (!Thread.currentThread().isInterrupted()) {
-                        UserProfile recievedProfile = null;
-                        recievedProfile = (UserProfile) input.readObject();
-                        if (recievedProfile != null) {
-                            Log.d(CLIENT_TAG, "Read from the stream: " + recievedProfile.toString());
-                            updateProfiles(recievedProfile, false);
+                        String messageStr = null;
+                        messageStr = input.readLine();
+                        if (messageStr != null) {
+                            Log.d(CLIENT_TAG, "Read from the stream: " + messageStr);
+                            updateMessages(messageStr, false);
                         } else {
                             Log.d(CLIENT_TAG, "The nulls! The nulls!");
                             break;
                         }
                     }
                     input.close();
-                } catch (Exception e) {
+                } catch (IOException e) {
                     Log.e(CLIENT_TAG, "Server loop error: ", e);
                 }
             }
@@ -208,7 +194,7 @@ public class PlaylistConnection {
                 Log.e(CLIENT_TAG, "Error when closing server socket.");
             }
         }
-        public void sendProfile(UserProfile profile) {
+        public void sendMessage(String msg) {
             try {
                 Socket socket = getSocket();
                 if (socket == null) {
@@ -219,9 +205,9 @@ public class PlaylistConnection {
                 PrintWriter out = new PrintWriter(
                         new BufferedWriter(
                                 new OutputStreamWriter(getSocket().getOutputStream())), true);
-                out.println(profile);
+                out.println(msg);
                 out.flush();
-                updateProfiles(profile, true);
+                updateMessages(msg, true);
             } catch (UnknownHostException e) {
                 Log.d(CLIENT_TAG, "Unknown Host", e);
             } catch (IOException e) {
@@ -229,7 +215,7 @@ public class PlaylistConnection {
             } catch (Exception e) {
                 Log.d(CLIENT_TAG, "Error3", e);
             }
-            Log.d(CLIENT_TAG, "Client sent profile: " + profile);
+            Log.d(CLIENT_TAG, "Client sent message: " + msg);
         }
     }
 }

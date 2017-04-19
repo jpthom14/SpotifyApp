@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cecs550.spotifyapp.Activities.Classes.NsdHelper;
-import com.cecs550.spotifyapp.Activities.Classes.PlaylistConnection;
+
 import com.cecs550.spotifyapp.Activities.Classes.UserProfile;
 import com.cecs550.spotifyapp.R;
 
@@ -39,7 +39,6 @@ public class ActivityCreate extends AppCompatActivity {
 
     public static final String TAG = "NsdChat";
 
-    PlaylistConnection connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,51 +73,9 @@ public class ActivityCreate extends AppCompatActivity {
             }
         });
 
-        GetOthersUsersTokens();
     }
 
-    @Override
-    protected void onStart() {
-        Log.d(TAG, "Starting.");
-        connection = new PlaylistConnection(handler);
-        nsdHelper = new NsdHelper(this);
-        nsdHelper.initializeNsd();
 
-        if(connection.getLocalPort() > -1) {
-            nsdHelper.registerService(connection.getLocalPort());
-        } else {
-            Log.d(TAG, "ServerSocket isn't bound.");
-        }
-
-        super.onStart();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "Pausing.");
-        if (nsdHelper != null) {
-            nsdHelper.stopDiscovery();
-        }
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(TAG, "Resuming.");
-        super.onResume();
-        if (nsdHelper != null) {
-            nsdHelper.discoverServices();
-        }
-    }
-
-    private void GetOthersUsersTokens() {
-
-    }
-
-    private void SetNumberConnectedText(int i){
-        TextView numUsersText = (TextView) findViewById(R.id.users_joined_text);
-        numUsersText.setText(Integer.toString(i));
-    }
 
     private void showCreatePopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -160,17 +117,4 @@ public class ActivityCreate extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStop() {
-        Log.d(TAG, "Being stopped.");
-        connection.tearDown();
-        nsdHelper = null;
-        connection = null;
-        super.onStop();
-    }
-    @Override
-    protected void onDestroy() {
-        Log.d(TAG, "Being destroyed.");
-        super.onDestroy();
-    }
 }
