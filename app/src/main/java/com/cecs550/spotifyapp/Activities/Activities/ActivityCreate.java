@@ -158,4 +158,19 @@ public class ActivityCreate extends AppCompatActivity {
         intent.putExtra("token", token);
         startActivity(intent);
     }
+
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "Being stopped.");
+        connection.tearDown();
+        nsdHelper = null;
+        connection = null;
+        super.onStop();
+    }
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "Being destroyed.");
+        super.onDestroy();
+    }
 }

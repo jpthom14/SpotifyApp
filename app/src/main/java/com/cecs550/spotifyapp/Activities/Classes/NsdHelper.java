@@ -3,6 +3,7 @@ package com.cecs550.spotifyapp.Activities.Classes;
 import android.content.Context;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
+import android.nfc.Tag;
 import android.util.Log;
 
 /**
@@ -59,10 +60,11 @@ public class NsdHelper {
                 System.out.println("Service Found?");
                 if (!service.getServiceType().equals(SERVICE_TYPE)) {
                     Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
-                } else if (service.getServiceName().equals(serviceName)) {
+                } /*else if (service.getServiceName().equals(serviceName)) {
                     Log.d(TAG, "Same machine: " + serviceName);
-                } else if (service.getServiceName().contains(serviceName)) {
+                }*/ else if (service.getServiceName().contains(serviceName)) {
                     manager.resolveService(service, resolveListener);
+                    Log.d(TAG, "service resolved?");
                 }
             }
 
